@@ -1,7 +1,7 @@
 from django.contrib.auth.models import User
 
 from rest_framework import serializers
-from .models import Categories, Products
+from .models import Category, Product, CartItem
 
 
 class LoginSerializer(serializers.ModelSerializer):
@@ -29,13 +29,15 @@ class RegisterSerializer(serializers.ModelSerializer):
 
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:
-        model = Categories
+        model = Category
         fields = '__all__'
 
 
 class ProductSerializer(serializers.ModelSerializer):
+    product_category = CategorySerializer(read_only=True)
+
     class Meta:
-        model = Products
+        model = Product
         fields = '__all__'
 
 
@@ -43,8 +45,25 @@ class ProductCreateSerializer(ProductSerializer):
     product_category = serializers.CharField()
 
     def create(self, validated_data):
-        validated_data['product_category'] = Categories.objects.get(id=validated_data['product_category'])
+        validated_data['product_category'] = Category.objects.get(id=validated_data['product_category'])
         category_detail = super().create(validated_data)
         return category_detail
+
+
+class CartItemSerializer(serializers.ModelSerializer):
+    ordered_product = ProductCreateSerializer(read_only=True)
+
+    class Meta:
+        model = CartItem
+        fields = '__all__'
+
+
+class CartItemCreateSerializer(CartItemSerializer):
+    ordered_product = serializers.CharField()
+
+    def create(self, validated_data):
+        validated_data['ordered_product'] = Product.objects.get(id=validated_data['ordered_product'])
+        product_detail = super().create(validated_data)
+        return product_detail
 
 

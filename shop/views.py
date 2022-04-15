@@ -4,10 +4,12 @@ from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.exceptions import AuthenticationFailed
+from rest_framework.permissions import IsAuthenticated
+from rest_framework_simplejwt.tokens import RefreshToken
 
-from shop.serializers import RegisterSerializer, LoginSerializer, ProductSerializer, ProductCreateSerializer,\
-    CategorySerializer
-from .models import Categories, Products
+from shop.serializers import RegisterSerializer, LoginSerializer, ProductSerializer, ProductCreateSerializer, \
+    CategorySerializer, CartItemSerializer, CartItemCreateSerializer
+from .models import Category, Product, CartItem
 
 
 # Create your views here.
@@ -38,20 +40,21 @@ class LoginView(APIView):
 
 class CategoryView(APIView):
     def get(self, request):  # to see categories
-        category = Categories.objects.all()
+        category = Category.objects.all()
         serializer = CategorySerializer(category, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    def post(self, request, format=None): # to create categories
+    def post(self, request, format=None):  # to create categories
         serializer = CategorySerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+
 class ProductView(APIView):
     def get(self, request):
-        product = Products.objects.all()
+        product = Product.objects.all()
         serializer = ProductSerializer(product, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -59,19 +62,46 @@ class ProductView(APIView):
         serializer = ProductCreateSerializer(data=request.data)
 
         try:
-            if Categories.objects.get(id=request.data['product_category']):
+            if Category.objects.get(id=request.data['product_category']):
                 if serializer.is_valid():
                     serializer.save()
                     details_serializer = ProductSerializer(instance=serializer.instance)
                     return Response(details_serializer.data, status=status.HTTP_201_CREATED)
                 return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-        except Categories.DoesNotExist:
+        except Category.DoesNotExist:
             res = {'msg': 'Category does not exists.'}
             return Response(res)
 
 
+class CartItemView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        cart_item = CartItem.objects.all()
+        serializer = CartItemSerializer(cart_item, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def post(self, request, format=None):
+        request.data['order_by_customer'] = request.user.id
+        serializer = CartItemCreateSerializer(data=request.data)
+
+        try:
+            if Product.objects.get(id=request.data['ordered_product']):
+                if serializer.is_valid():
+                    serializer.save()
+                    detail_serializer = CartItemSerializer(instance=serializer.instance)
+                    return Response(detail_serializer.data, status=status.HTTP_201_CREATED)
+                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        except Product.DoesNotExist:
+            res = {'msg': 'Product does not exists.'}
+            return Response(res)
 
 
+class BlacklistRefreshView(APIView):
+    def post(self, request):
+        token = RefreshToken(request.data.get('refresh'))
+        #  token = RefreshToken(base64_encoded_token_string)
 
-
-
+        token.blacklist()
+        res = {'msg': 'User logged out'}
+        return Response(res)
