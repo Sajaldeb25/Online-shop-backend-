@@ -21,4 +21,4 @@ class CartItem(models.Model):
     order_by_customer = models.ForeignKey(User, on_delete=models.CASCADE)  # customer details
     ordered_product = models.ForeignKey(Product, on_delete=models.CASCADE)  # product details
     quantity = models.IntegerField()  # number
-    total_cost = models.IntegerField()  # per piece cost * quantity
+

@@ -97,6 +97,13 @@ class CartItemView(APIView):
             return Response(res)
 
 
+class UserOrderedItemView(APIView):
+    def get(self, request):
+        ordered_by_user = CartItem.objects.filter(order_by_customer=11)
+        serializer = CartItemSerializer(ordered_by_user, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
 class BlacklistRefreshView(APIView):
     def post(self, request):
         token = RefreshToken(request.data.get('refresh'))
@@ -105,3 +112,5 @@ class BlacklistRefreshView(APIView):
         token.blacklist()
         res = {'msg': 'User logged out'}
         return Response(res)
+
+
