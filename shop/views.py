@@ -2,6 +2,8 @@ from django.contrib.auth.models import User
 
 from rest_framework import status
 from rest_framework.views import APIView
+from rest_framework.viewsets import GenericViewSet
+from rest_framework.views import exception_handler
 from rest_framework.response import Response
 from rest_framework.exceptions import AuthenticationFailed
 from rest_framework.permissions import IsAuthenticated
@@ -82,11 +84,11 @@ class CartItemView(APIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def post(self, request, format=None):
-        request.data['order_by_customer'] = request.user.id
+        request.data['carted_by_customer'] = request.user.id
         serializer = CartItemCreateSerializer(data=request.data)
 
         try:
-            if Product.objects.get(id=request.data['ordered_product']):
+            if Product.objects.get(id=request.data['carted_product']):
                 if serializer.is_valid():
                     serializer.save()
                     detail_serializer = CartItemSerializer(instance=serializer.instance)
@@ -99,7 +101,7 @@ class CartItemView(APIView):
 
 class UserOrderedItemView(APIView):
     def get(self, request):
-        ordered_by_user = CartItem.objects.filter(order_by_customer=11)
+        ordered_by_user = CartItem.objects.filter(carted_by_customer=11)
         serializer = CartItemSerializer(ordered_by_user, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 

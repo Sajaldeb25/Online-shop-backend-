@@ -18,7 +18,13 @@ class Product(models.Model):
 
 
 class CartItem(models.Model):
-    order_by_customer = models.ForeignKey(User, on_delete=models.CASCADE)  # customer details
-    ordered_product = models.ForeignKey(Product, on_delete=models.CASCADE)  # product details
+    carted_by_customer = models.ForeignKey(User, on_delete=models.CASCADE)  # customer details
+    carted_product = models.ForeignKey(Product, on_delete=models.CASCADE)  # product details
     quantity = models.IntegerField()  # number
+
+
+class Order(models.Model):
+    ordered_by_customer = models.ForeignKey(User, on_delete=models.CASCADE)
+    ordered_product = models.ForeignKey(CartItem, on_delete=models.CASCADE)
+
 

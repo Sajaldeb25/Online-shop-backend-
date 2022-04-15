@@ -1,7 +1,7 @@
 from django.contrib.auth.models import User
 
 from rest_framework import serializers
-from .models import Category, Product, CartItem
+from .models import Category, Product, CartItem, Order
 
 
 class LoginSerializer(serializers.ModelSerializer):
@@ -51,7 +51,7 @@ class ProductCreateSerializer(ProductSerializer):
 
 
 class CartItemSerializer(serializers.ModelSerializer):
-    ordered_product = ProductCreateSerializer(read_only=True)
+    carted_product = ProductCreateSerializer(read_only=True)
 
     class Meta:
         model = CartItem
@@ -59,11 +59,26 @@ class CartItemSerializer(serializers.ModelSerializer):
 
 
 class CartItemCreateSerializer(CartItemSerializer):
-    ordered_product = serializers.CharField()
+    carted_product = serializers.CharField()
 
     def create(self, validated_data):
-        validated_data['ordered_product'] = Product.objects.get(id=validated_data['ordered_product'])
+        validated_data['carted_product'] = Product.objects.get(id=validated_data['carted_product'])
         product_detail = super().create(validated_data)
         return product_detail
 
 
+class OrderItemSerializer(serializers.ModelSerializer):
+    ordered_product = CartItemCreateSerializer(read_only=True)
+
+    class Meta:
+        model = Order
+        fields = '__all__'
+
+
+class OrderItemCreateSerializer(OrderItemSerializer):
+    ordered_product = serializers.CharField()
+
+    def create(self, validated_data):
+        validated_data['ordered_product'] = CartItem.objects.get(id=validated_data['ordered_product'])
+        ordered_product_detail = super().create(validated_data)
+        return ordered_product_detail
