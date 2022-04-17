@@ -1,5 +1,5 @@
 from django.contrib.auth.models import User
-
+from django.db.models import F
 from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.viewsets import GenericViewSet
@@ -10,7 +10,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.tokens import RefreshToken
 
 from shop.serializers import RegisterSerializer, LoginSerializer, ProductSerializer, ProductCreateSerializer, \
-    CategorySerializer, CartItemSerializer, CartItemCreateSerializer
+    CategorySerializer, CartItemSerializer, CartItemCreateSerializer, OrderItemSerializer, OrderItemCreateSerializer
 from .models import Category, Product, CartItem
 
 
@@ -79,7 +79,7 @@ class CartItemView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
-        cart_item = CartItem.objects.all()
+        cart_item = CartItem.objects.filter(carted_by_customer=request.user.id)
         serializer = CartItemSerializer(cart_item, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -100,10 +100,17 @@ class CartItemView(APIView):
 
 
 class UserOrderedItemView(APIView):
+    permission_classes = [IsAuthenticated]
+
     def get(self, request):
-        ordered_by_user = CartItem.objects.filter(carted_by_customer=11)
+        ordered_by_user = CartItem.objects.filter(carted_by_customer=request.user.id, order_flag=True)
         serializer = CartItemSerializer(ordered_by_user, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def post(self, request):
+        CartItem.objects.filter(carted_by_customer=request.user.id, order_flag=False)\
+            .update(order_flag=True)
+        return Response(status=status.HTTP_200_OK)
 
 
 class BlacklistRefreshView(APIView):

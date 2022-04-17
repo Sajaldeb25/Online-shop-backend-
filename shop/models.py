@@ -21,6 +21,7 @@ class CartItem(models.Model):
     carted_by_customer = models.ForeignKey(User, on_delete=models.CASCADE)  # customer details
     carted_product = models.ForeignKey(Product, on_delete=models.CASCADE)  # product details
     quantity = models.IntegerField()  # number
+    order_flag = models.BooleanField(default=False)
 
 
 class Order(models.Model):

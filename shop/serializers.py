@@ -51,7 +51,7 @@ class ProductCreateSerializer(ProductSerializer):
 
 
 class CartItemSerializer(serializers.ModelSerializer):
-    carted_product = ProductCreateSerializer(read_only=True)
+    carted_product = ProductSerializer(read_only=True)
 
     class Meta:
         model = CartItem
