@@ -2,6 +2,7 @@ from django.contrib.auth.models import User
 from django.db.models import F
 from rest_framework import status
 from rest_framework.views import APIView
+from rest_framework.generics import ListAPIView
 from rest_framework.viewsets import GenericViewSet
 from rest_framework.views import exception_handler
 from rest_framework.response import Response
@@ -121,5 +122,10 @@ class BlacklistRefreshView(APIView):
         token.blacklist()
         res = {'msg': 'User logged out'}
         return Response(res)
+
+
+class ProductList(ListAPIView):
+    serializer_class = CategorySerializer
+    queryset = Category.objects.all()
 
 
