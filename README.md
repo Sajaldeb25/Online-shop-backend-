@@ -47,42 +47,13 @@ $ python manage.py runserver
 ```
 Then visit [http://localhost:8000/product/](http://localhost:8000) to view backend of the app.
 
-# 📋 APIs of the App
+# 📋 Features of the Project
 
-- `Get` todo list
-- `Update` a specific todo 
-- `Delete` a specific todo
-- `Post/create` a todo 
-
-
-
-# 📋 Folder Structure 
-```
-To_do_list_project_backend
-├── todoapp
-│    ├── migrations                           - migration file, which contains all migration history. 
-│                  ├── __init__.py            - Initial migration
-│                  ├── 0001_initial.py        - First migration 
-│    
-│    ├── admin.py     
-│    ├── __init__.py  
-│    ├── admin.py
-│    ├── apps.py
-│    ├── models.py              - It contains Task model 
-│    ├── serializer.py          - Serialize model data 
-│    ├── tests.py
-│    ├── urls.py                - Defines path for urls
-│    ├── views.py
-├── todoproject
-│    ├── __init__.py
-│    ├── settings.py            - Contains setting of the project, including REST-Api, Database connection, and app name. 
-│    ├── urls.py
-│    ├── wsgi.py
-│    ├── asgi.py
-│── .gitignore
-│── manage.py                    
-│── requirements.txt             - requirements file for install configuration  
-
-```
-
+- Two types of user - admin, user
+- Product Management
+- Monitor Categories of products
+- sign in and sign up 
+- cart items
+- order items
+- pagination of products 
 
