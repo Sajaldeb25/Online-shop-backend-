@@ -59,13 +59,24 @@ Then visit [http://localhost:8000/product/](http://localhost:8000) to view backe
 
 
 
+
 # 📋 Folder Structure 
 ```
 Online-shop-backend-
-├── todoapp
-│    ├── migrations                           - migration file, which contains all migration history. 
-│                  ├── __init__.py            - Initial migration
-│                  ├── 0001_initial.py        - First migration 
+├── shop
+│    ├── migrations                                                     - contains all migration history. 
+│                  ├── __init__.py                                      - Initial migration
+│                  ├── 0001_initial.py                                  - First migration 
+│                  ├── 0002_rename_categories_category_rename_products_product.py        
+│                  ├── 0003_cartitem.py        
+│                  ├── 0004_remove_cartitem_total_cost.py        
+│                  ├── 0005_rename_order_by_customer_cartitem_carted_by_customer_and_more.py       
+│                  ├── 0006_delete_order.py        
+│                  ├── 0007_order.py       
+│                  ├── 0008_cartitem_order_flag.py        
+│                  ├── 0009_alter_cartitem_order_flag.py        
+│                  ├── 0010_product_product_picture.py    
+│                  ├── 0011_alter_product_product_picture.py    
 │    
 │    ├── admin.py     
 │    ├── __init__.py  
@@ -75,17 +86,17 @@ Online-shop-backend-
 │    ├── serializer.py          - Serialize model data 
 │    ├── tests.py
 │    ├── urls.py                - Defines path for urls
-│    ├── views.py
-├── todoproject
+│    ├── views.py               - All logics 
+├── ecommerce
 │    ├── __init__.py
 │    ├── settings.py            - Contains setting of the project, including REST-Api, Database connection, and app name. 
 │    ├── urls.py
 │    ├── wsgi.py
 │    ├── asgi.py
-│── .gitignore
+├── media
+│    ├── product_images         - Contains Product images 
 │── manage.py                    
 │── requirements.txt             - requirements file for install configuration  
+|── README.md
 
 ```
-
-
